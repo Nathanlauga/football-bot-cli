@@ -1,0 +1,32 @@
+Compétitions /v1/competitions/
+	Nom, journée actuelle, nombre de journée totales, nombre d'équipe, nombre de matchs
+	Tri possible par année de saison
+
+Equipes d'une compétition (Nombre) /v1/competitions/{id}/teams
+	Nom, code, nom court, url blason
+
+Informations d'une compétion /v1/competitions/{id}/leagueTable
+	Position, nom, journée actuelle, points, (buts, buts encaissés, difference de buts, victoire, nuls, défaite)*
+	*Même chose pour à domicile et à l'exterieur
+	Tri possible par journée
+
+Matchs de la compétition (Nombre) /v1/competitions/{id}/fixtures
+	Date, statut, journée, équipe domicile, équipe exterieur, (résultat équipe domicile, résultat équipe exterieur)*
+	*Même chose pour la mi-temps
+	Tri possible par journée ou par nombre de jour passé ou à venir (past or next)
+
+Informations sur les matchs toute compétions confondus dans une plage de temps /v1/fixtures/
+	Date, statut, journée, équipe domicile, équipe exterieur, (résultat équipe domicile, résultat équipe exterieur)*
+	*Même chose pour la mi-temps
+	Tri possible par nombre de jour passé ou à venir (Par défaut, les 7 prochains jours)
+
+Informations des rencontres d'une équipe (Saison, Nombre de rencontres) /v1/teams/61/fixtures
+	Date, statut, journée, équipe à domicile, équipe à l'exterieur, (résultat équipe domicile, résultat équipe exterieur)*
+	*Même chose pour la mi-temps
+	Tri possible pour la saison, par nombre de jour passé ou à venir (past or new), par type de match (exterieur ou domicile)
+
+Information d'une équipe /v1/teams/{id}
+	Nom, code, nom court, url blason
+
+Joueurs d'une équipe (Nombre) /v1/teams/{id}/players
+	Nom, position, numero, date de naissance, nationalité, fin contrat
