@@ -18,7 +18,7 @@ Matchs de la compétition (Nombre) /v1/competitions/{id}/fixtures
 Informations sur les matchs toute compétions confondus dans une plage de temps /v1/fixtures/
 	Date, statut, journée, équipe domicile, équipe exterieur, (résultat équipe domicile, résultat équipe exterieur)*
 	*Même chose pour la mi-temps
-	Tri possible par nombre de jour passé ou à venir (Par défaut, les 7 prochains jours)
+	Tri possible par nombre de jour passé ou à venir (Par defaut, les 7 prochains jours)
 
 Informations des rencontres d'une équipe (Saison, Nombre de rencontres) /v1/teams/61/fixtures
 	Date, statut, journée, équipe à domicile, équipe à l'exterieur, (résultat équipe domicile, résultat équipe exterieur)*
@@ -30,3 +30,19 @@ Information d'une équipe /v1/teams/{id}
 
 Joueurs d'une équipe (Nombre) /v1/teams/{id}/players
 	Nom, position, numero, date de naissance, nationalité, fin contrat
+	
+
+
+
+
+- GetCompetitionRanking --> détails
+- GetCompetitionTeams
+- GetCompetitionInfo 
+	--> année 
+	--> matchs journée
+- GetMatchInfo [Competition]
+- GetTeamInfo (blason - img)
+	--> classement
+	--> match
+	--> joueur 
+
