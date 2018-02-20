@@ -1,5 +1,7 @@
 const inquirer = require('inquirer');
 const getLuisIntent = require('./luis');
+const API = require('./api');
+const api = new API();
 
 function ask(message = 'Bonjour, je suis FootBot, si vous avez une question sur le football posez la moi ! :)') {
   inquirer
@@ -87,59 +89,67 @@ function findCompetitionId(entities, throwError = true) {
   }
 }
 
-function getTeamPlayers(team) {
+async function getTeamPlayers(team) {
   console.log('getTeamPlayers');
   // api call to get players from the team
-
+  const data = await api.getTeamPlayers(team);
+  console.log(data);
   // print list of players
   return 'getTeamPlayers';
 }
 
-function getMatchInfo(params = {}) {
+async function getMatchInfo(params = {}) {
   console.log('getMatchInfo');
   // api call with timeFrame --> getMatchInfos
   // params.timeFrame
-
+  const data = await api.getMatchInfos(team);
+  console.log(data);
   // print list of matchs
   return 'getMatchInfo';
 }
-function getTeamMatchInfo(params = {}) {
+async function getTeamMatchInfo(params = {}) {
   console.log('getTeamMatchInfo');
   // api call --> getTeamMatchInfos
   // params.teamId & params.timeFrame
-
+  const data = await api.getTeamMatchInfos(team);
+  console.log(data);
   // print list of matchs
   return 'getTeamMatchInfo';
 }
-function getCompetionMatchInfo(params = {}) {
+async function getCompetionMatchInfo(params = {}) {
   console.log('getCompetionMatchInfo');
   // api call --> getCompetitionMatchs
   // params.competitionsId & params.timeFrame
+  const data = await api.getCompetitionMatchs(team);
+  console.log(data);
 
   // print list of matchs
   return 'getCompetionMatchInfo';
 }
 
-function getCompetitionTeams(competition) {
+async function getCompetitionTeams(competition) {
   console.log('getCompetitionTeams');
   //api call get competition teams
-
+  const data = await api.getCompitionTeams(competition);
+  console.log(data);
   // print list of teams
   return 'getCompetitionTeams';
 }
 
-function getCompetitionRanking(competition) {
+async function getCompetitionRanking(competition) {
   console.log('getCompetitionRanking');
   // api call get competition ranking
-
+  const data = await api.getCompetitionInfo(competition);
+  console.log(data);
   // print ranking of competition
   return 'getCompetitionRanking';
 }
 
-function getCompetionInfo(competition) {
+async function getCompetionInfo(competition) {
   console.log('getCompetionInfo');
   // api call get competition
-
+  const data = await api.getCompetitionInfo(competition);
+  console.log(data.standing);
   // print info
   return 'getCompetionInfo';
 }
