@@ -16,12 +16,23 @@ function ask(message = 'Bonjour, je suis FootBot, si vous avez une question sur 
       }
       const { intent, entities } = await getLuisIntent(answer);
       try {
-        findResponse(intent, entities);
+        console.log(findResponse(intent, entities));
         ask('Autre chose ?');
       } catch (error) {
         console.log(error);
       }
     });
+}
+
+async function getRanking(competition){
+    const { intent, entities } = await getLuisIntent(competition);
+    try {
+        let competitionId = findCompetitionId(entities);
+        console.log(getCompetitionRanking(competitionId));
+        ask('Autre chose ?');
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function findResponse(intent, entities) {
@@ -145,5 +156,5 @@ function getCompetionInfo(competition) {
 }
 
 module.exports = {
-  ask,
+  ask, getRanking,
 };
