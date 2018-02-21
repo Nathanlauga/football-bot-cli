@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 const program = require('commander');
 const { ask, getRanking } = require('./cli');
-const API = require('./api.js');
-
-const api = new API();
 
 program
     .version('1.0.0')

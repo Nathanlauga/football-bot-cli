@@ -118,7 +118,7 @@ async function getTeamMatchInfo(params = {}) {
   console.log('getTeamMatchInfo');
   // api call --> getTeamMatchInfos
   // params.teamId & params.timeFrame
-  const data = await api.getTeamMatchInfos(team);
+  const data = await api.getTeamMatchInfos(params);
   console.log(data);
   // print list of matchs
   return 'getTeamMatchInfo';
@@ -127,7 +127,7 @@ async function getCompetionMatchInfo(params = {}) {
   console.log('getCompetionMatchInfo');
   // api call --> getCompetitionMatchs
   // params.competitionsId & params.timeFrame
-  const data = await api.getCompetitionMatchs(team);
+  const data = await api.getCompetitionMatchs(params);
   console.log(data);
 
   // print list of matchs

@@ -26,8 +26,8 @@ class API {
     return data;
   }
 
-  async getCompetitionMatchs(competitionId) {
-    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${competitionId}/fixtures`, {
+  async getCompetitionMatchs({competitionId, timeFrame}) {
+    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${competitionId}/fixtures?timeframe=${timeFrame}`, {
       headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
     });
     return data;
@@ -40,8 +40,8 @@ class API {
     return data;
   }
 
-  async getTeamMatchInfos(teamId) {
-    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/fixtures`, {
+  async getTeamMatchInfos({teamId, timeFrame}) {
+    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/fixtures?timeframe=${timeFrame}`, {
       headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
     });
     return data;
