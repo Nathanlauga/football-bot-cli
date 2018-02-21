@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const teamsJson = require('./teams.json');
 const getLuisIntent = require('./luis');
 const API = require('./api');
 const api = new API();
@@ -161,6 +162,16 @@ async function getCompetionInfo(competition) {
   return 'getCompetionInfo';
 }
 
+function findTeamName(teamId){
+  let json = JSON.parse(JSON.stringify(teamsJson));
+  json = json.filter(team => team[teamId]);
+  if (json.length === 1){
+      return json[0][teamId];
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
-  ask, getRanking,
+  ask, getRanking, findTeamName
 };
