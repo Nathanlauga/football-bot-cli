@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const teamsJson = require('./teams.json');
+const competitionsJson = require('./competitions.json');
 const getLuisIntent = require('./luis');
 const API = require('./api');
 const api = new API();
@@ -163,15 +164,24 @@ async function getCompetionInfo(competition) {
 }
 
 function findTeamName(teamId){
-  let json = JSON.parse(JSON.stringify(teamsJson));
-  json = json.filter(team => team[teamId]);
-  if (json.length === 1){
-      return json[0][teamId];
-  } else {
-    return null;
-  }
+    let json = JSON.parse(JSON.stringify(teamsJson));
+    json = json.filter(team => team[teamId]);
+    if (json.length === 1){
+        return json[0][teamId];
+    } else {
+        return null;
+    }
+}
+function findCompetitionName(competitionId){
+    let json = JSON.parse(JSON.stringify(competitionsJson));
+    json = json.filter(competition => competition[competitionId]);
+    if (json.length === 1){
+        return json[0][competitionId];
+    } else {
+        return null;
+    }
 }
 
 module.exports = {
-  ask, getRanking, findTeamName
+  ask, getRanking, findTeamName, findCompetitionName
 };
