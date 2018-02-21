@@ -50,10 +50,10 @@ function findResponse(intent, entities) {
       // if params timeframe empty --> timeFrame : "n7"
       params.timeFrame = 'n7';
 
-      if (competitionId !== null) {
+      if (competitionId !== "Plus d'une compétition trouvée." && competitionId !== "Compétitions introuvable.") {
         params.competition = competitionId;
         return getCompetionMatchInfo(params);
-      } else if (teamId !== null) {
+      } else if (teamId !== "Equipe introuvable." && teamId !== "Plus d'une équipe trouvée.") {
         params.team = teamId;
         return getTeamMatchInfo(params);
       }
@@ -74,29 +74,25 @@ function findResponse(intent, entities) {
   }
 }
 
-function findTeamId(entities, throwError = true) {
+function findTeamId(entities) {
   let teams = entities.filter((entity) => entity.type === 'Teams');
   if (teams.length === 1) {
     return teams[0].resolution.values;
-  } else if (throwError) {
-    if (teams.length > 1) throw new Error('too much teams');
-    else throw new Error('team not found');
+  } else if (teams.length > 1) {
+      return "Plus d'une équipe trouvée.";
   } else {
-    if (teams.length > 1) throw new Error('too much teams');
-    else return null;
+    return "Equipe introuvable.";
   }
 }
 
-function findCompetitionId(entities, throwError = true) {
+function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
   if (competitions.length === 1) {
     return competitions[0].resolution.values;
-  } else if (throwError) {
-    if (competitions.length > 1) throw new Error('too much competitions');
-    else throw new Error('competition not found');
+  } if (competitions.length > 1) {
+    return "Plus d'une compétition trouvée.";
   } else {
-    if (competitions.length > 1) throw new Error('too much competitions');
-    else return null;
+    return "Compétitions introuvable.";
   }
 }
 
