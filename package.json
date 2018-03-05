@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Nathanlauga/football-bot-cli#readme",
   "dependencies": {
     "axios": "^0.17.1",
+    "cli-table": "^0.3.1",
     "commander": "^2.14.1",
     "dotenv": "^5.0.0",
     "inquirer": "^5.1.0"
