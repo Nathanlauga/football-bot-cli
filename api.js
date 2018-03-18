@@ -2,7 +2,7 @@ const axios = require('axios');
 
 class API {
   constructor() {
-    this.rootUrl = "http://www.football-data.org";
+    this.rootUrl = "https://www.football-data.org";
   }
 
   async getCompetitions() {
@@ -26,8 +26,15 @@ class API {
     return data;
   }
 
+  async getTeamPlayers(teamId) {
+    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/players`, {
+      headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
+    });
+    return data;
+  }
+
   async getCompetitionMatchs({competitionId, timeFrame}) {
-    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${competitionId}/fixtures?timeframe=${timeFrame}`, {
+    const { data } = await axios.get(`${this.rootUrl}/v1/competitions/${competitionId}/fixtures?timeFrame=${timeFrame}`, {
       headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
     });
     return data;
@@ -41,14 +48,7 @@ class API {
   }
 
   async getTeamMatchInfos({teamId, timeFrame}) {
-    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/fixtures?timeframe=${timeFrame}`, {
-      headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
-    });
-    return data;
-  }
-
-  async getTeamPlayers(teamId) {
-    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/players`, {
+    const { data } = await axios.get(`${this.rootUrl}/v1/teams/${teamId}/fixtures?timeFrame=${timeFrame}`, {
       headers: { "X-Auth-Token": "29c012ae3c6f465da64b5d671848bbc6" }
     });
     return data;

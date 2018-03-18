@@ -1,81 +1,35 @@
 const inquirer = require('inquirer');
 const getLuisIntent = require('./luis');
 const API = require('./api');
-const { showRanking, showTeamPlayers } = require('./printer');
+const { showRanking, showTeamPlayers, showTeamsCompetition, showMatchInfos } = require('./printer');
 const api = new API();
 
-function ask(message = 'Bonjour, je suis FootBot, si vous avez une question sur le football posez la moi ! :)') {
-  inquirer
-    .prompt([
-      {
-        type: 'input',
-        name: 'answer',
-        message,
-      },
-    ])
-    .then(async ({ answer }) => {
-      if (answer === 'exit' || answer === 'quit') {
-        return;
-      }
-      const { intent, entities } = await getLuisIntent(answer);
-      try {
-        await findResponse(intent, entities);
-        ask('Autre chose ?');
-      } catch (error) {
-        console.log(error);
-      }
-    });
-}
+function say(message) {
+  const handlerIntents = new Map();
+  handlerIntents.set('GetTeamPlayers', getTeamPlayers);
+  handlerIntents.set('GetCompetitionRanking', getCompetitionRanking);
+  handlerIntents.set('GetCompetitionTeams', getCompetitionTeams);
+  handlerIntents.set('GetMatchInfo', getMatchInfo);
+  handlerIntents.set(null, () => console.log("Je n'ai pas bien compris ce que vous voulez dire"));
 
-async function getRanking(competition) {
-  const { intent, entities } = await getLuisIntent(competition);
-  try {
-    showRanking(await getCompetitionRanking(findCompetitionId(entities)));
-    ask('Autre chose ?');
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function findResponse(intent, entities) {
-  switch (intent) {
-    case 'GetTeamPlayers':
-      return showTeamPlayers(await getTeamPlayers(findTeamId(entities)));
-
-    case 'GetMatchInfo':
-      let params = {};
-      let competitionId = findCompetitionId(entities, false);
-      let teamId = findTeamId(entities, false);
-
-      // if params timeframe empty --> timeFrame : "n7"
-      params.timeFrame = 'n7';
-
-      if (competitionId !== "Plus d'une compétition trouvée." && competitionId !== 'Compétitions introuvable.') {
-        params.competition = competitionId;
-        return getCompetionMatchInfo(params);
-      } else if (teamId !== 'Equipe introuvable.' && teamId !== "Plus d'une équipe trouvée.") {
-        params.team = teamId;
-        return getTeamMatchInfo(params);
-      }
-
-      return getMatchInfo(params);
-
-    case 'GetCompetitionTeams':
-      return getCompetitionTeams(findCompetitionId(entities));
-
-    case 'GetCompetitionRanking':
-      const competition = findCompetitionId(entities);
-      if (competition === 'Compétitions introuvable.') {
-        return competition;
-      }
-      showRanking(await getCompetitionRanking(findCompetitionId(entities)));
-      break;
-
-    case 'GetCompetionInfo':
-      return getCompetionInfo(findCompetitionId(entities));
-    default:
-      return 'no answer';
-  }
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'answer',
+      message,
+    },
+  ]).then(async ({ answer }) => {
+    if (answer === 'exit' || answer === 'quit' || answer === '') {
+      return;
+    }
+    const { intent, entities } = await getLuisIntent(answer);
+    try {
+      await handlerIntents.get(intent)(entities);
+      say('Autre chose ?');
+    } catch (error) {
+      console.log(error);
+    }
+  });
 }
 
 function findTeamId(entities) {
@@ -83,9 +37,12 @@ function findTeamId(entities) {
   if (teams.length === 1) {
     return teams[0].resolution.values;
   } else if (teams.length > 1) {
-    return "Plus d'une équipe trouvée.";
+    const teamsValues = [];
+    for (team of teams) {
+      teamsValues.push(team.resolution.values);
+    }
   } else {
-    return 'Equipe introuvable.';
+    return null;
   }
 }
 
@@ -93,74 +50,111 @@ function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
   if (competitions.length === 1) {
     return competitions[0].resolution.values;
-  }
-  if (competitions.length > 1) {
-    return "Plus d'une compétition trouvée.";
+  } else if (competitions.length > 1) {
+    const competitionsValues = [];
+    for (competition of competitions) {
+      competitionsValues.push(competition.resolution.values);
+    }
   } else {
-    return 'Compétitions introuvable.';
+    return null;
   }
 }
 
-async function getTeamPlayers(team) {
+async function getTeamPlayers(entities) {
+  const team = findTeamId(entities);
   console.log('getTeamPlayers');
   // api call to get players from the team
   // print list of players
-  return await api.getTeamPlayers(team);
+  const data = await api.getTeamPlayers(team);
+  showTeamPlayers(data);
+  return data;
 }
 
-async function getMatchInfo(params = {}) {
-  console.log('getMatchInfo');
-  // api call with timeFrame --> getMatchInfos
-  // params.timeFrame
-  const data = await api.getMatchInfos(team);
-  console.log(data);
-  // print list of matchs
-  return 'getMatchInfo';
-}
-async function getTeamMatchInfo(params = {}) {
-  console.log('getTeamMatchInfo');
-  // api call --> getTeamMatchInfos
-  // params.teamId & params.timeFrame
-  const data = await api.getTeamMatchInfos(params);
-  console.log(data);
-  // print list of matchs
-  return 'getTeamMatchInfo';
-}
-async function getCompetionMatchInfo(params = {}) {
-  console.log('getCompetionMatchInfo');
-  // api call --> getCompetitionMatchs
-  // params.competitionsId & params.timeFrame
-  const data = await api.getCompetitionMatchs(params);
-  console.log(data);
+async function getMatchInfo(entities) {
+  let params = {};
 
-  // print list of matchs
-  return 'getCompetionMatchInfo';
+  params.timeFrame = 'n7';
+
+  let competitionId = findCompetitionId(entities);
+  let teamId = findTeamId(entities);
+
+  if (competitionId !== null && competitionId.length === 1) {
+    params.competitionId = competitionId[0];
+    const data = await api.getCompetitionMatchs(params);
+    showMatchInfos(data);
+    return data;
+  } else if (teamId !== null && teamId.length === 1) {
+    params.teamId = teamId[0];
+    const data = await api.getTeamMatchInfos(params);
+    showMatchInfos(data);
+    return data;
+  } else {
+    const data = await api.getMatchInfos();
+    showMatchInfos(data);
+    return data;
+  }
 }
 
-async function getCompetitionTeams(competition) {
+async function getTeamMatchInfo(entities) {
+  const params = {};
+  params.timeFrame = 'n7';
+
+  let teamId = findTeamId(entities);
+  if (teamId !== null && teamId.length === 1) {
+    params.teamId = teamId[0];
+    const data = await api.getTeamMatchInfos(params);
+    showMatchInfos(data);
+  }
+}
+
+async function getCompetitionMatchInfo(entities) {
+  const params = {};
+  params.timeFrame = "n7";
+  let competitionId = findCompetitionId(entities);
+  if (competitionId !== null && competitionId.length === 1) {
+    params.competitionId = competitionId[0];
+    const data = await api.getCompetitionMatchs(params);
+    showMatchInfos(data);
+  }
+}
+
+async function getCompetitionTeams(entities) {
   console.log('getCompetitionTeams');
   //api call get competition teams
+  const competition = findCompetitionId(entities);
   const data = await api.getCompitionTeams(competition);
-  console.log(data);
-  // print list of teams
-  return 'getCompetitionTeams';
+  return showTeamsCompetition(data);
 }
 
-async function getCompetitionRanking(competition) {
-  console.log('getCompetitionRanking');
-  // api call get competition ranking
-  // print ranking of competition
-  return await api.getCompetitionInfo(competition);
+async function getCompetitionRanking(entities) {
+  try {
+    const competition = findCompetitionId(entities);
+    if (competition !== null) {
+      const results = await api.getCompetitionInfo(competition);
+      return showRanking(results);
+    } else {
+      return console.log("Je n'ai pas compris le nom de la compétition.")
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-async function getCompetionInfo(competition) {
-  console.log('getCompetionInfo');
-  // api call get competition
-  // print info
-  return await api.getCompetitionInfo(competition);
+async function getRanking(competition) {
+  const { entities } = await getLuisIntent(competition);
+  try {
+    await getCompetitionRanking(entities);
+    say('Autre chose ?');
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {
-  ask,
-  getRanking,
+  say,
+  getCompetitionRanking,
+  getTeamPlayers,
+  getTeamMatchInfo,
+  getCompetitionMatchInfo,
+  getCompetitionTeams
 };
