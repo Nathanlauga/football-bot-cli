@@ -48,14 +48,8 @@ function findTeamId(entities) {
 
 function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
-  if (competitions[0].resolution.values.length === 1) {
+  if (competitions.resolution && competitions[0].resolution.values.length === 1) {
     return competitions[0].resolution.values;
-  } else if (competitions[0].resolution.values.length > 1) {
-    // const competitionsValues = [];
-    // for (competition of competitions) {
-    //   competitionsValues.push(competition.resolution.values);
-    // }
-    return null;
   } else {
     return null;
   }
@@ -63,12 +57,11 @@ function findCompetitionId(entities) {
 
 async function getTeamPlayers(entities) {
   const team = findTeamId(entities);
-  console.log('getTeamPlayers');
-  // api call to get players from the team
-  // print list of players
-  const data = await api.getTeamPlayers(team);
-  showTeamPlayers(data);
-  return data;
+  if (team != null) {
+    const data = await api.getTeamPlayers(team);
+    return showTeamPlayers(data);
+  }
+  console.log("Je n'ai pas compris de quelle équipe vous voulez parler");
 }
 
 async function getMatchInfo(entities) {
@@ -104,8 +97,9 @@ async function getTeamMatchInfo(entities) {
   if (teamId !== null && teamId.length === 1) {
     params.teamId = teamId[0];
     const data = await api.getTeamMatchInfos(params);
-    showMatchInfos(data);
+    return showMatchInfos(data);
   }
+  console.log("Je n'ai pas compris de quelle équipe vous voulez parler")
 }
 
 async function getCompetitionMatchInfo(entities) {
@@ -115,8 +109,9 @@ async function getCompetitionMatchInfo(entities) {
   if (competitionId !== null && competitionId.length === 1) {
     params.competitionId = competitionId[0];
     const data = await api.getCompetitionMatchs(params);
-    showMatchInfos(data);
+    return showMatchInfos(data);
   }
+  console.log("Je n'ai pas compris de quelle compétition vous voulez parler");
 }
 
 async function getCompetitionTeams(entities) {
@@ -138,16 +133,6 @@ async function getCompetitionRanking(entities) {
     }
   } catch (error) {
     console.error(error);
-  }
-}
-
-async function getRanking(competition) {
-  const { entities } = await getLuisIntent(competition);
-  try {
-    await getCompetitionRanking(entities);
-    say('Autre chose ?');
-  } catch (error) {
-    console.log(error);
   }
 }
 
