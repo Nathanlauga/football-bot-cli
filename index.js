@@ -7,7 +7,7 @@ program
   .version('1.0.0')
   .option('-r, --ranking [competition]', 'Show the ranking of a competition, if there is a space don\'t forget the quotes.')
   .option('-p, --players [team]', 'Show the players of the team, if there is a space don\'t forget the quotes.')
-  .option('-t, --team [team]', 'Show the team matchs in the next 7 days, if there is a space don\'t forget the quotes.')
+  .option('-t, --team [team]', 'Show the team matchs, if there is a space don\'t forget the quotes.')
   .option('-c, --competition [competition]',
     'Show the next fixtures of the team or the competition you choosed, if there is a space don\'t forget the quotes.')
   .parse(process.argv);

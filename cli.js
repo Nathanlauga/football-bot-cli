@@ -48,13 +48,14 @@ function findTeamId(entities) {
 
 function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
-  if (competitions.length === 1) {
+  if (competitions[0].resolution.values.length === 1) {
     return competitions[0].resolution.values;
-  } else if (competitions.length > 1) {
-    const competitionsValues = [];
-    for (competition of competitions) {
-      competitionsValues.push(competition.resolution.values);
-    }
+  } else if (competitions[0].resolution.values.length > 1) {
+    // const competitionsValues = [];
+    // for (competition of competitions) {
+    //   competitionsValues.push(competition.resolution.values);
+    // }
+    return null;
   } else {
     return null;
   }

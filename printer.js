@@ -30,7 +30,7 @@ function showTeamPlayers(data) {
     const dateContract = player.contractUntil ?
       moment(player.contractUntil).format('L')
       : "Inconnu";
-    table.push([colors.green(player.name), player.position, player.jerseyNumber, dateOfBirthWithAge, player.nationality, dateContract]);
+    table.push([colors.green(player.name), player.position, player.jerseyNumber||'Inconnu', dateOfBirthWithAge, player.nationality, dateContract]);
   }
   console.log(table.toString());
 }
@@ -53,6 +53,7 @@ function showMatchInfos(data) {
     'IN_PLAY': colors.green,
     'POSTPONED': colors.magenta,
     'FINISHED': colors.red,
+    'SCHEDULED': colors.blue,
   };
 
   const table = new Table({
@@ -73,7 +74,7 @@ function showMatchInfos(data) {
       ? `${match.result.halfTime.goalsHomeTeam} - ${match.result.halfTime.goalsAwayTeam}`
       : 'Inconnu';
 
-    table.push([
+      table.push([
       status[match.status](match.status), date, match.matchday, rencontre, result, halfTimeResult
     ])
   }
