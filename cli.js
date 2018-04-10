@@ -48,7 +48,7 @@ function findTeamId(entities) {
 
 function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
-  if (competitions[0].resolution && competitions[0].resolution.values.length === 1) {
+  if (competitions.length && competitions[0].resolution && competitions[0].resolution.values.length === 1) {
     return competitions[0].resolution.values;
   } else {
     return null;
@@ -66,8 +66,6 @@ async function getTeamPlayers(entities) {
 
 async function getMatchInfo(entities) {
   let params = {};
-
-  params.timeFrame = 'n7';
 
   let competitionId = findCompetitionId(entities);
   let teamId = findTeamId(entities);
@@ -91,7 +89,6 @@ async function getMatchInfo(entities) {
 
 async function getTeamMatchInfo(entities) {
   const params = {};
-  params.timeFrame = 'n7';
 
   let teamId = findTeamId(entities);
   if (teamId !== null && teamId.length === 1) {
@@ -104,7 +101,6 @@ async function getTeamMatchInfo(entities) {
 
 async function getCompetitionMatchInfo(entities) {
   const params = {};
-  params.timeFrame = "n7";
   let competitionId = findCompetitionId(entities);
   if (competitionId !== null && competitionId.length === 1) {
     params.competitionId = competitionId[0];
