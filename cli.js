@@ -48,7 +48,7 @@ function findTeamId(entities) {
 
 function findCompetitionId(entities) {
   let competitions = entities.filter((entity) => entity.type === 'Competitions');
-  if (competitions.resolution && competitions[0].resolution.values.length === 1) {
+  if (competitions[0].resolution && competitions[0].resolution.values.length === 1) {
     return competitions[0].resolution.values;
   } else {
     return null;
